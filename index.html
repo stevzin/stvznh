@@ -73,6 +73,16 @@
     .status-dot.away{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
     .status-dot.offline{background:#444}
 
+    .insta-link{
+      display:flex;align-items:center;gap:7px;
+      padding:7px 18px;border-radius:999px;
+      border:1px solid #2a2a2a;
+      font-size:.78rem;letter-spacing:.05em;
+      color:var(--muted);text-decoration:none;
+      transition:.2s;
+    }
+    .insta-link svg{width:15px;height:15px;flex-shrink:0}
+    .insta-link:hover{border-color:#e1306c;color:#e1306c}
     .footer{font-size:.65rem;color:#2a2a2a;letter-spacing:.1em;text-transform:uppercase}
   </style>
 </head>
@@ -85,6 +95,14 @@
 
   <h1>Itha<span class="accent">lo</span></h1>
   <div class="location">🇧🇷 &nbsp;Brazil · @stevzin_</div>
+  <a class="insta-link" href="https://www.instagram.com/stvznh/" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2"/>
+      <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+    </svg>
+    @stvznh
+  </a>
   <hr/>
 
   <p class="bio">
@@ -164,9 +182,9 @@
   // VIEW COUNTER
   async function fetchViews(){
     try{
-      const r = await fetch("https://api.counterapi.dev/v1/stvznh/pageviews/up");
+      const r = await fetch("https://api.countapi.xyz/hit/stvznh.github.io/visits");
       const d = await r.json();
-      const n = d.count ?? d.value ?? "—";
+      const n = d.value ?? "—";
       document.getElementById("viewCount").textContent = Number(n).toLocaleString("pt-BR");
     }catch{ document.getElementById("viewCount").textContent = "—" }
   }
@@ -175,7 +193,7 @@
   async function fetchSteam(){
     try{
       const xmlUrl = `https://steamcommunity.com/profiles/${STEAM_ID}/?xml=1`;
-      const proxy  = `https://api.allorigins.win/get?url=${encodeURIComponent(xmlUrl)}`;
+      const proxy  = `https://api.allorigins.win/get?url=${encodeURIComponent(xmlUrl)}&t=${Date.now()}`;
       const r = await fetch(proxy);
       const d = await r.json();
       const parser = new DOMParser();
@@ -183,14 +201,14 @@
 
       const get = tag => xml.querySelector(tag)?.textContent?.trim() || "";
 
-      const name   = get("steamID");
-      const state  = get("onlineState");       // online / offline / in-game
-      const stateMsg = get("stateMessage");    // "In-Game GameName" or "Online" etc
-      const avatar = get("avatarMedium");
-      const gameName = get("inGameInfo gameName") || get("gameName");
+      const name     = get("steamID");
+      const state    = get("onlineState");    // "online" | "offline" | "in-game"
+      const avatar   = get("avatarMedium");
+      // gameName inside inGameInfo only exists when ACTUALLY in-game
+      const inGameEl = xml.querySelector("inGameInfo > gameName");
+      const gameName = inGameEl ? inGameEl.textContent.trim() : "";
 
       document.getElementById("steamName").textContent = name || "Ithalo";
-
       const av = document.getElementById("steamAvatar");
       if(avatar) av.src = avatar;
 
@@ -198,12 +216,13 @@
       const txt  = document.getElementById("steamStatusText");
       const game = document.getElementById("steamGame");
 
-      if(state === "in-game" || gameName){
+      // ONLY show game when state is explicitly "in-game"
+      if(state === "in-game" && gameName){
         dot.className   = "status-dot ingame";
         txt.textContent = "jogando";
         txt.style.color = "#60a5fa";
-        const gn = gameName || stateMsg.replace("In-Game","").replace("In game","").trim();
-        if(gn){ game.textContent = "🎮 " + gn; game.style.display = "block"; }
+        game.textContent = "🎮 " + gameName;
+        game.style.display = "block";
       } else if(state === "online"){
         dot.className   = "status-dot online";
         txt.textContent = "online";
