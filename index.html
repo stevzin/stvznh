@@ -29,6 +29,8 @@
     .chip{padding:5px 13px;border-radius:999px;border:1px solid var(--border);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);transition:.2s}
     .chip:hover{border-color:var(--red);color:var(--text)}
     .chip.hot{border-color:rgba(255,24,1,.5);color:var(--red)}
+
+    /* now playing */
     .np-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
     .np-header{display:flex;align-items:center;gap:8px;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
     .np-dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.2s ease-in-out infinite}
@@ -49,6 +51,21 @@
     .np-bars span:nth-child(4){height:16px;animation-delay:.1s}
     @keyframes bar{from{transform:scaleY(.4)}to{transform:scaleY(1)}}
     .np-bars.idle span{animation:none;transform:scaleY(.3);background:#333}
+
+    /* views counter */
+    .views-box{
+      display:flex;align-items:center;gap:10px;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:12px;padding:10px 16px;width:100%;
+    }
+    .views-icon{font-size:1rem}
+    .views-text{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    .views-count{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:1.4rem;letter-spacing:.06em;
+      color:var(--red);margin-left:auto;
+    }
+
     .footer{font-size:.65rem;color:#2a2a2a;letter-spacing:.1em;text-transform:uppercase}
   </style>
 </head>
@@ -74,7 +91,16 @@
     <span class="chip">🇧🇷 Brasil</span>
   </div>
   <hr/>
-  <div class="np-box" id="npBox">
+
+  <!-- VIEWS -->
+  <div class="views-box">
+    <span class="views-icon">👁️</span>
+    <span class="views-text">visualizações</span>
+    <span class="views-count" id="viewCount">...</span>
+  </div>
+
+  <!-- NOW PLAYING -->
+  <div class="np-box">
     <div class="np-header">
       <div class="np-dot idle" id="npDot"></div>
       <span id="npLabel">carregando...</span>
@@ -92,9 +118,24 @@
       </div>
     </div>
   </div>
+
   <div class="footer">ithalo · 2026</div>
 </div>
+
 <script>
+  // ── VIEW COUNTER (counterapi.dev) ──────────────────
+  async function fetchViews(){
+    try{
+      const r = await fetch("https://api.counterapi.dev/v1/stvznh/pageviews/up");
+      const d = await r.json();
+      const n = d.count ?? d.value ?? "—";
+      document.getElementById("viewCount").textContent = Number(n).toLocaleString("pt-BR");
+    } catch(e){
+      document.getElementById("viewCount").textContent = "—";
+    }
+  }
+
+  // ── LAST.FM NOW PLAYING ────────────────────────────
   const LASTFM_USERNAME = "stevzin";
   const LASTFM_API_KEY  = "9dd30c32d73a5d7f8280d8697aafaf4b";
   const API = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USERNAME}&api_key=${LASTFM_API_KEY}&format=json&limit=1`;
@@ -136,6 +177,7 @@
     }
   }
 
+  fetchViews();
   fetchNowPlaying();
   setInterval(fetchNowPlaying, 30000);
 </script>
