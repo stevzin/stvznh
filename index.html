@@ -156,7 +156,7 @@
 <script>
   // ── CONFIG ─────────────────────────────────────────
   const STEAM_API_KEY   = "5D1B48527B68869DAAB339A9307FF887";
-  const STEAM_ID        = "76561198116780222";
+  const STEAM_ID        = "76561199227307908";
   const LASTFM_USERNAME = "stevzin";
   const LASTFM_API_KEY  = "9dd30c32d73a5d7f8280d8697aafaf4b";
   // ───────────────────────────────────────────────────
@@ -171,47 +171,54 @@
     }catch{ document.getElementById("viewCount").textContent = "—" }
   }
 
-  // STEAM STATUS
+  // STEAM STATUS (via XML profile - no CORS issues)
   async function fetchSteam(){
     try{
-      const url = `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_API_KEY}&steamids=${STEAM_ID}`;
-      const proxy = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+      const xmlUrl = `https://steamcommunity.com/profiles/${STEAM_ID}/?xml=1`;
+      const proxy  = `https://api.allorigins.win/get?url=${encodeURIComponent(xmlUrl)}`;
       const r = await fetch(proxy);
       const d = await r.json();
-      const p = d.response?.players?.[0];
-      if(!p) return;
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(d.contents, "text/xml");
 
-      // avatar
+      const get = tag => xml.querySelector(tag)?.textContent?.trim() || "";
+
+      const name   = get("steamID");
+      const state  = get("onlineState");       // online / offline / in-game
+      const stateMsg = get("stateMessage");    // "In-Game GameName" or "Online" etc
+      const avatar = get("avatarMedium");
+      const gameName = get("inGameInfo gameName") || get("gameName");
+
+      document.getElementById("steamName").textContent = name || "Ithalo";
+
       const av = document.getElementById("steamAvatar");
-      av.src = p.avatarmedium || p.avatar;
+      if(avatar) av.src = avatar;
 
-      // name
-      document.getElementById("steamName").textContent = p.personaname;
-
-      // status
       const dot  = document.getElementById("steamDot");
       const txt  = document.getElementById("steamStatusText");
       const game = document.getElementById("steamGame");
 
-      // personastate: 0=offline,1=online,2=busy,3=away,4=snooze,6=looking to play
-      if(p.gameextrainfo){
-        dot.className  = "status-dot ingame";
+      if(state === "in-game" || gameName){
+        dot.className   = "status-dot ingame";
         txt.textContent = "jogando";
         txt.style.color = "#60a5fa";
-        game.textContent = p.gameextrainfo;
-        game.style.display = "block";
-      } else if(p.personastate === 0){
-        dot.className  = "status-dot offline";
-        txt.textContent = "offline";
-        txt.style.color = "var(--muted)";
-      } else if(p.personastate === 3 || p.personastate === 4){
-        dot.className  = "status-dot away";
-        txt.textContent = "ausente";
-        txt.style.color = "#facc15";
-      } else {
-        dot.className  = "status-dot online";
+        const gn = gameName || stateMsg.replace("In-Game","").replace("In game","").trim();
+        if(gn){ game.textContent = "🎮 " + gn; game.style.display = "block"; }
+      } else if(state === "online"){
+        dot.className   = "status-dot online";
         txt.textContent = "online";
         txt.style.color = "#4ade80";
+        game.style.display = "none";
+      } else if(state === "away"){
+        dot.className   = "status-dot away";
+        txt.textContent = "ausente";
+        txt.style.color = "#facc15";
+        game.style.display = "none";
+      } else {
+        dot.className   = "status-dot offline";
+        txt.textContent = "offline";
+        txt.style.color = "var(--muted)";
+        game.style.display = "none";
       }
     }catch(e){
       document.getElementById("steamStatusText").textContent = "erro ao carregar";
