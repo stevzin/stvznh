@@ -332,6 +332,28 @@
     icon.classList.toggle("open");
   }
 
+  // Progress ticker state
+  let progressInterval = null;
+  let trackStart = null;
+  let trackDuration = 0;
+  let lastTrackKey = "";
+
+  function startProgress(duration){
+    clearInterval(progressInterval);
+    trackDuration = duration;
+    trackStart = Date.now();
+    const fill = document.getElementById("npProgressFill");
+    const bar  = document.getElementById("npProgress");
+    bar.classList.remove("idle");
+    progressInterval = setInterval(() => {
+      if(!trackDuration) return;
+      const elapsed = (Date.now() - trackStart) / 1000;
+      const pct = Math.min((elapsed / trackDuration) * 100, 100);
+      fill.style.width = pct + "%";
+      if(pct >= 100) clearInterval(progressInterval);
+    }, 1000);
+  }
+
   async function fetchNowPlaying(){
     try{
       const r = await fetch(LFAPI.replace("limit=1","limit=8"));
@@ -416,28 +438,6 @@
       });
 
     }catch{ document.getElementById("npLabel").textContent="erro ao carregar" }
-  }
-
-  // Progress ticker
-  let progressInterval = null;
-  let trackStart = null;
-  let trackDuration = 0;
-  let lastTrackKey = "";
-
-  function startProgress(duration){
-    clearInterval(progressInterval);
-    trackDuration = duration;
-    trackStart = Date.now();
-    const fill = document.getElementById("npProgressFill");
-    const bar  = document.getElementById("npProgress");
-    bar.classList.remove("idle");
-    progressInterval = setInterval(() => {
-      if(!trackDuration) return;
-      const elapsed = (Date.now() - trackStart) / 1000;
-      const pct = Math.min((elapsed / trackDuration) * 100, 100);
-      fill.style.width = pct + "%";
-      if(pct >= 100) clearInterval(progressInterval);
-    }, 1000);
   }
 
   fetchSteam();
