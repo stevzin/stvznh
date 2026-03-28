@@ -12,28 +12,46 @@
     body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 16px}
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:.3;pointer-events:none}
     body::after{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(255,24,1,.1) 0%,transparent 70%);pointer-events:none}
+
     .card{position:relative;z-index:1;width:100%;max-width:400px;background:rgba(10,10,10,.9);border:1px solid var(--border);border-radius:24px;padding:40px 28px 36px;display:flex;flex-direction:column;align-items:center;gap:20px;backdrop-filter:blur(12px);box-shadow:0 0 60px rgba(255,24,1,.07),0 32px 64px rgba(0,0,0,.6);animation:rise .8s cubic-bezier(.22,1,.36,1) both}
     @keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
     .avatar-ring{position:relative;width:110px;height:110px;flex-shrink:0}
     .avatar-ring::before{content:'';position:absolute;inset:-2px;border-radius:50%;background:conic-gradient(var(--red),#ff6b00,var(--red),#900,var(--red));animation:rotatering 3s linear infinite}
     @keyframes rotatering{to{transform:rotate(360deg)}}
     .avatar-ring::after{content:'';position:absolute;inset:2px;border-radius:50%;background:var(--bg)}
     .avatar{position:absolute;inset:3px;border-radius:50%;object-fit:cover;object-position:center top;width:calc(100% - 6px);height:calc(100% - 6px);z-index:1}
+
     h1{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;letter-spacing:.06em;line-height:1;text-align:center}
     h1 .accent{color:var(--red)}
     .location{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
+
+    .insta-link{display:flex;align-items:center;gap:7px;padding:7px 18px;border-radius:999px;border:1px solid #2a2a2a;font-size:.78rem;letter-spacing:.05em;color:var(--muted);text-decoration:none;transition:.2s}
+    .insta-link svg{width:15px;height:15px;flex-shrink:0}
+    .insta-link:hover{border-color:#e1306c;color:#e1306c}
+
     hr{width:100%;border:none;border-top:1px solid var(--border)}
     .bio{text-align:center;font-size:.9rem;line-height:1.75;color:#aaa}
     .bio b{color:var(--text)}
+
     .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
     .chip{padding:5px 13px;border-radius:999px;border:1px solid var(--border);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);transition:.2s}
     .chip:hover{border-color:var(--red);color:var(--text)}
-    .chip.hot{border-color:rgba(255,24,1,.5);color:var(--red)}
 
-    /* views */
-    .views-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 16px;width:100%}
-    .views-text{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-    .views-count{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:var(--red);margin-left:auto}
+    /* steam box */
+    .steam-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+    .steam-header{display:flex;align-items:center;gap:8px;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+    .steam-row{display:flex;align-items:center;gap:12px}
+    .steam-avatar{width:46px;height:46px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#1a1a1a}
+    .steam-info{flex:1;min-width:0}
+    .steam-name{font-size:.9rem;font-weight:500;color:var(--text)}
+    .steam-status{font-size:.78rem;margin-top:3px;display:flex;align-items:center;gap:5px}
+    .steam-game{font-size:.75rem;color:#60a5fa;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .status-dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
+    .status-dot.ingame{background:var(--blue);box-shadow:0 0 6px var(--blue)}
+    .status-dot.away{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+    .status-dot.offline{background:#444}
 
     /* now playing */
     .np-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
@@ -57,32 +75,30 @@
     @keyframes bar{from{transform:scaleY(.4)}to{transform:scaleY(1)}}
     .np-bars.idle span{animation:none;transform:scaleY(.3);background:#333}
 
-    /* steam box */
-    .steam-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-    .steam-header{display:flex;align-items:center;gap:8px;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-    .steam-logo{font-size:.9rem}
-    .steam-row{display:flex;align-items:center;gap:12px}
-    .steam-avatar{width:46px;height:46px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#1a1a1a}
-    .steam-info{flex:1;min-width:0}
-    .steam-name{font-size:.9rem;font-weight:500;color:var(--text)}
-    .steam-status{font-size:.78rem;margin-top:3px;display:flex;align-items:center;gap:5px}
-    .steam-game{font-size:.75rem;color:#60a5fa;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-    .status-dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
-    .status-dot.ingame{background:var(--blue);box-shadow:0 0 6px var(--blue)}
-    .status-dot.away{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
-    .status-dot.offline{background:#444}
-
-    .insta-link{
-      display:flex;align-items:center;gap:7px;
-      padding:7px 18px;border-radius:999px;
-      border:1px solid #2a2a2a;
-      font-size:.78rem;letter-spacing:.05em;
-      color:var(--muted);text-decoration:none;
-      transition:.2s;
+    /* favorite games */
+    .games-section{width:100%}
+    .section-label{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+    .games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .game-card{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:2/3;background:#1a1a1a;cursor:pointer;group}
+    .game-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s,filter .3s}
+    .game-card:hover img{transform:scale(1.05);filter:brightness(.5)}
+    .game-card .game-title{
+      position:absolute;inset:0;display:flex;align-items:flex-end;
+      padding:8px;font-size:.62rem;font-weight:500;letter-spacing:.02em;
+      color:white;text-shadow:0 1px 4px rgba(0,0,0,.8);
+      opacity:0;transition:opacity .3s;
+      background:linear-gradient(to top,rgba(0,0,0,.8) 0%,transparent 60%);
     }
-    .insta-link svg{width:15px;height:15px;flex-shrink:0}
-    .insta-link:hover{border-color:#e1306c;color:#e1306c}
+    .game-card:hover .game-title{opacity:1}
+    .game-card .game-title-always{
+      position:absolute;bottom:0;left:0;right:0;
+      padding:6px 8px;font-size:.58rem;font-weight:500;
+      color:white;text-shadow:0 1px 3px rgba(0,0,0,1);
+      background:linear-gradient(to top,rgba(0,0,0,.85) 0%,transparent 100%);
+      line-height:1.2;
+    }
+
     .footer{font-size:.65rem;color:#2a2a2a;letter-spacing:.1em;text-transform:uppercase}
   </style>
 </head>
@@ -95,6 +111,7 @@
 
   <h1>Itha<span class="accent">lo</span></h1>
   <div class="location">🇧🇷 &nbsp;Brazil · @stevzin_</div>
+
   <a class="insta-link" href="https://www.instagram.com/stvznh/" target="_blank" rel="noopener">
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2"/>
@@ -103,18 +120,20 @@
     </svg>
     @stvznh
   </a>
+
   <hr/>
 
   <p class="bio">
-    Passionate about <b>Formula 1</b> &amp; <b>motorsport</b>.<br>
-    Big into <b>gaming</b> — from sim racing to everything else.<br>
+    Passionate about <b>Formula 1</b> &amp; <b>gaming</b>.<br>
+    Hardware enthusiast 🔧 &amp; sim racer.<br>
+    Future <b>Data Engineering</b> student ✦ dreams of working in <b>aviation</b> ✈️<br>
     <span style="color:#555;font-size:.85em">knows a little bit of English 😄</span>
   </p>
 
   <div class="chips">
-    <span class="chip hot">🏁 Formula 1</span>
-    <span class="chip hot">Motorsport</span>
+    <span class="chip">🏁 Formula 1</span>
     <span class="chip">🎮 Gaming</span>
+    <span class="chip">🔧 Hardware</span>
     <span class="chip">Sim Racing</span>
     <span class="chip">✈️ Aviation</span>
     <span class="chip">🇧🇷 Brasil</span>
@@ -122,23 +141,68 @@
 
   <hr/>
 
-  <!-- VIEWS -->
-  <div class="views-box">
-    <span style="font-size:1rem">👁️</span>
-    <span class="views-text">visualizações</span>
-    <span class="views-count" id="viewCount">...</span>
+  <!-- FAVORITE GAMES -->
+  <div class="games-section">
+    <div class="section-label">jogos favoritos</div>
+    <div class="games-grid">
+
+      <div class="game-card">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/244210/library_600x900.jpg" alt="Assetto Corsa" onerror="this.src='https://cdn.cloudflare.steamstatic.com/steam/apps/244210/header.jpg'"/>
+        <div class="game-title-always">Assetto Corsa</div>
+      </div>
+
+      <div class="game-card">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1190460/library_600x900.jpg" alt="Death Stranding" onerror="this.src='https://cdn.cloudflare.steamstatic.com/steam/apps/1190460/header.jpg'"/>
+        <div class="game-title-always">Death Stranding</div>
+      </div>
+
+      <div class="game-card">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2837730/library_600x900.jpg" alt="Death Stranding 2" onerror="this.src='https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2837730/header.jpg'"/>
+        <div class="game-title-always">Death Stranding 2</div>
+      </div>
+
+      <div class="game-card">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/library_600x900.jpg" alt="Cyberpunk 2077" onerror="this.src='https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg'"/>
+        <div class="game-title-always">Cyberpunk 2077</div>
+      </div>
+
+      <div class="game-card">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/library_600x900.jpg" alt="Elden Ring" onerror="this.src='https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg'"/>
+        <div class="game-title-always">Elden Ring</div>
+      </div>
+
+      <div class="game-card">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/367520/library_600x900.jpg" alt="Hollow Knight" onerror="this.src='https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg'"/>
+        <div class="game-title-always">Hollow Knight</div>
+      </div>
+
+    </div>
   </div>
+
+  <!-- GTA 6 solo card -->
+  <div class="games-section">
+    <div class="games-grid" style="grid-template-columns:1fr">
+      <div class="game-card" style="aspect-ratio:16/7">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Grand_Theft_Auto_VI_logo.png/320px-Grand_Theft_Auto_VI_logo.png"
+             style="object-fit:contain;padding:12px;background:#0a0a14"
+             alt="GTA 6"/>
+        <div class="game-title-always" style="font-size:.7rem">GTA VI — coming soon 🔥</div>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
 
   <!-- STEAM -->
   <div class="steam-box">
     <div class="steam-header">
-      <span class="steam-logo">🎮</span>
+      <span>🎮</span>
       <span>steam</span>
     </div>
     <div class="steam-row">
-      <img class="steam-avatar" id="steamAvatar" src="" alt=""/>
+      <img class="steam-avatar" id="steamAvatar" src="https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_medium.jpg" alt=""/>
       <div class="steam-info">
-        <div class="steam-name" id="steamName">Mirlock</div>
+        <div class="steam-name" id="steamName">max</div>
         <div class="steam-status" id="steamStatus">
           <span class="status-dot offline" id="steamDot"></span>
           <span id="steamStatusText">carregando...</span>
@@ -172,24 +236,12 @@
 </div>
 
 <script>
-  // ── CONFIG ─────────────────────────────────────────
   const STEAM_API_KEY   = "5D1B48527B68869DAAB339A9307FF887";
   const STEAM_ID        = "76561199227307908";
   const LASTFM_USERNAME = "stevzin";
   const LASTFM_API_KEY  = "9dd30c32d73a5d7f8280d8697aafaf4b";
-  // ───────────────────────────────────────────────────
 
-  // VIEW COUNTER
-  async function fetchViews(){
-    try{
-      const r = await fetch("https://api.countapi.xyz/hit/stvznh.github.io/visits");
-      const d = await r.json();
-      const n = d.value ?? "—";
-      document.getElementById("viewCount").textContent = Number(n).toLocaleString("pt-BR");
-    }catch{ document.getElementById("viewCount").textContent = "—" }
-  }
-
-  // STEAM STATUS (via XML profile - no CORS issues)
+  // STEAM STATUS
   async function fetchSteam(){
     try{
       const xmlUrl = `https://steamcommunity.com/profiles/${STEAM_ID}/?xml=1`;
@@ -198,55 +250,34 @@
       const d = await r.json();
       const parser = new DOMParser();
       const xml = parser.parseFromString(d.contents, "text/xml");
-
       const get = tag => xml.querySelector(tag)?.textContent?.trim() || "";
-
       const name     = get("steamID");
-      const state    = get("onlineState");    // "online" | "offline" | "in-game"
+      const state    = get("onlineState");
       const avatar   = get("avatarMedium");
-      // gameName inside inGameInfo only exists when ACTUALLY in-game
       const inGameEl = xml.querySelector("inGameInfo > gameName");
       const gameName = inGameEl ? inGameEl.textContent.trim() : "";
-
-      document.getElementById("steamName").textContent = name || "Ithalo";
+      if(name) document.getElementById("steamName").textContent = name;
       const av = document.getElementById("steamAvatar");
       if(avatar) av.src = avatar;
-
       const dot  = document.getElementById("steamDot");
       const txt  = document.getElementById("steamStatusText");
       const game = document.getElementById("steamGame");
-
-      // ONLY show game when state is explicitly "in-game"
-      if(state === "in-game" && gameName){
-        dot.className   = "status-dot ingame";
-        txt.textContent = "jogando";
-        txt.style.color = "#60a5fa";
-        game.textContent = "🎮 " + gameName;
-        game.style.display = "block";
+      if(state === "in-game"){
+        dot.className="status-dot ingame"; txt.textContent="jogando"; txt.style.color="#60a5fa";
+        if(gameName){ game.textContent="🎮 "+gameName; game.style.display="block"; }
+        else { game.style.display="none"; }
       } else if(state === "online"){
-        dot.className   = "status-dot online";
-        txt.textContent = "online";
-        txt.style.color = "#4ade80";
-        game.style.display = "none";
+        dot.className="status-dot online"; txt.textContent="online"; txt.style.color="#4ade80"; game.style.display="none";
       } else if(state === "away"){
-        dot.className   = "status-dot away";
-        txt.textContent = "ausente";
-        txt.style.color = "#facc15";
-        game.style.display = "none";
+        dot.className="status-dot away"; txt.textContent="ausente"; txt.style.color="#facc15"; game.style.display="none";
       } else {
-        dot.className   = "status-dot offline";
-        txt.textContent = "offline";
-        txt.style.color = "var(--muted)";
-        game.style.display = "none";
+        dot.className="status-dot offline"; txt.textContent="offline"; txt.style.color="var(--muted)"; game.style.display="none";
       }
-    }catch(e){
-      document.getElementById("steamStatusText").textContent = "erro ao carregar";
-    }
+    }catch(e){ document.getElementById("steamStatusText").textContent="erro ao carregar" }
   }
 
   // LAST.FM
   const LFAPI = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USERNAME}&api_key=${LASTFM_API_KEY}&format=json&limit=1`;
-
   function timeAgo(unixTs){
     const diff = Math.floor(Date.now()/1000) - parseInt(unixTs);
     if(diff < 60) return "agora há pouco";
@@ -254,7 +285,6 @@
     if(diff < 7200) return "há 1 hora";
     return `há ${Math.floor(diff/3600)} horas`;
   }
-
   async function fetchNowPlaying(){
     try{
       const r = await fetch(LFAPI);
@@ -276,13 +306,12 @@
       else { dot.classList.add("idle"); bars.classList.add("idle"); }
       if(art && !art.includes("2a96cbd8b46e442fc41c2b86b821562f")){
         const img = document.getElementById("npArt");
-        img.src = art; img.style.display = "block";
-        document.getElementById("npArtPlaceholder").style.display = "none";
+        img.src=art; img.style.display="block";
+        document.getElementById("npArtPlaceholder").style.display="none";
       }
-    }catch{ document.getElementById("npLabel").textContent = "erro ao carregar" }
+    }catch{ document.getElementById("npLabel").textContent="erro ao carregar" }
   }
 
-  fetchViews();
   fetchSteam();
   fetchNowPlaying();
   setInterval(fetchSteam, 60000);
