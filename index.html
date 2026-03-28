@@ -380,14 +380,14 @@
         const ts2  = t.date?.uts;
         const div  = document.createElement("div");
         div.className = "np-q-item";
-        div.innerHTML = \`
-          \${validArt(a) ? \`<img class="np-q-art" src="\${a}" alt=""/>\` : \`<div class="np-q-art" style="display:flex;align-items:center;justify-content:center;font-size:.9rem">♪</div>\`}
+        div.innerHTML = `
+          ${validArt(a) ? `<img class="np-q-art" src="${a}" alt=""/>` : `<div class="np-q-art" style="display:flex;align-items:center;justify-content:center;font-size:.9rem">♪</div>`}
           <div class="np-q-info">
-            <div class="np-q-song">\${t.name}</div>
-            <div class="np-q-artist">\${t.artist["#text"]}</div>
+            <div class="np-q-song">${t.name}</div>
+            <div class="np-q-artist">${t.artist["#text"]}</div>
           </div>
-          <div class="np-q-time">\${ts2 ? timeAgo(ts2) : ""}</div>
-        \`;
+          <div class="np-q-time">${ts2 ? timeAgo(ts2) : ""}</div>
+        `;
         listEl.appendChild(div);
       });
 
