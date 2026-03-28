@@ -54,7 +54,8 @@
     .status-dot.offline{background:#444}
 
     /* now playing */
-    .np-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+    .np-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+    .np-main{padding:14px 16px;display:flex;flex-direction:column;gap:10px;cursor:pointer;user-select:none}
     .np-header{display:flex;align-items:center;gap:8px;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
     .np-dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.2s ease-in-out infinite}
     .np-dot.idle{background:#333;animation:none}
@@ -74,6 +75,30 @@
     .np-bars span:nth-child(4){height:16px;animation-delay:.1s}
     @keyframes bar{from{transform:scaleY(.4)}to{transform:scaleY(1)}}
     .np-bars.idle span{animation:none;transform:scaleY(.3);background:#333}
+
+    /* mini thumbs row */
+    .np-thumbs{display:flex;gap:5px;margin-top:2px}
+    .np-thumb{width:26px;height:26px;border-radius:4px;object-fit:cover;opacity:.6;transition:.2s;flex-shrink:0}
+    .np-thumb:hover{opacity:1;transform:scale(1.15)}
+
+    /* queue drawer */
+    .np-queue{
+      max-height:0;overflow:hidden;
+      transition:max-height .35s cubic-bezier(.22,1,.36,1);
+      border-top:0px solid var(--border);
+    }
+    .np-queue.open{max-height:320px;border-top-width:1px}
+    .np-queue-inner{padding:10px 16px 14px;display:flex;flex-direction:column;gap:8px}
+    .np-q-label{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+    .np-q-item{display:flex;align-items:center;gap:10px}
+    .np-q-art{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;background:#1a1a1a}
+    .np-q-info{flex:1;min-width:0}
+    .np-q-song{font-size:.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .np-q-artist{font-size:.7rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .np-q-time{font-size:.62rem;color:#333;flex-shrink:0}
+    .np-toggle{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-left:auto;display:flex;align-items:center;gap:4px}
+    .np-toggle svg{width:10px;height:10px;transition:transform .3s}
+    .np-toggle.open svg{transform:rotate(180deg)}
 
     /* favorite games */
     .games-section{width:100%}
@@ -136,6 +161,43 @@
     <span class="chip">Sim Racing</span>
     <span class="chip">✈️ Aviation</span>
     <span class="chip">🇧🇷 Brasil</span>
+  </div>
+
+    <!-- NOW PLAYING -->
+  <div class="np-box" id="npBox">
+    <div class="np-main" id="npToggleBtn" onclick="toggleQueue()">
+      <div class="np-header">
+        <div class="np-dot idle" id="npDot"></div>
+        <span id="npLabel">carregando...</span>
+        <div class="np-toggle" id="npToggleIcon">
+          <span>queue</span>
+          <svg viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="np-track">
+        <div class="np-art-placeholder" id="npArtPlaceholder">🎵</div>
+        <img class="np-art" id="npArt" src="" alt="" style="display:none"/>
+        <div class="np-info">
+          <div class="np-song" id="npSong">—</div>
+          <div class="np-artist" id="npArtist">—</div>
+          <div class="np-time" id="npTime"></div>
+        </div>
+        <div class="np-bars idle" id="npBars">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <!-- mini thumbs -->
+      <div class="np-thumbs" id="npThumbs"></div>
+    </div>
+    <!-- queue drawer -->
+    <div class="np-queue" id="npQueue">
+      <div class="np-queue-inner">
+        <div class="np-q-label">ultimas ouvidas</div>
+        <div id="npQueueList"></div>
+      </div>
+    </div>
   </div>
 
   <hr/>
@@ -204,25 +266,6 @@
     </div>
   </div>
 
-  <!-- NOW PLAYING -->
-  <div class="np-box">
-    <div class="np-header">
-      <div class="np-dot idle" id="npDot"></div>
-      <span id="npLabel">carregando...</span>
-    </div>
-    <div class="np-track">
-      <div class="np-art-placeholder" id="npArtPlaceholder">🎵</div>
-      <img class="np-art" id="npArt" src="" alt="" style="display:none"/>
-      <div class="np-info">
-        <div class="np-song" id="npSong">—</div>
-        <div class="np-artist" id="npArtist">—</div>
-        <div class="np-time" id="npTime"></div>
-      </div>
-      <div class="np-bars idle" id="npBars">
-        <span></span><span></span><span></span><span></span>
-      </div>
-    </div>
-  </div>
 
   <div class="footer">ithalo · 2026</div>
 </div>
@@ -277,30 +320,77 @@
     if(diff < 7200) return "há 1 hora";
     return `há ${Math.floor(diff/3600)} horas`;
   }
+  function toggleQueue(){
+    const q = document.getElementById("npQueue");
+    const icon = document.getElementById("npToggleIcon");
+    q.classList.toggle("open");
+    icon.classList.toggle("open");
+  }
+
   async function fetchNowPlaying(){
     try{
-      const r = await fetch(LFAPI);
+      const r = await fetch(LFAPI.replace("limit=1","limit=8"));
       const d = await r.json();
-      const track = d.recenttracks?.track?.[0];
+      const tracks = d.recenttracks?.track || [];
+      const track = tracks[0];
       if(!track) return;
+
       const isLive = track["@attr"]?.nowplaying === "true";
       const song   = track.name;
       const artist = track.artist["#text"];
       const art    = track.image?.[2]?.["#text"] || "";
       const ts     = track.date?.uts;
+
       document.getElementById("npSong").textContent   = song;
       document.getElementById("npArtist").textContent = artist;
-      document.getElementById("npLabel").textContent  = isLive ? "ouvindo agora 🎧" : "última música ouvida";
+      document.getElementById("npLabel").textContent  = isLive ? "ouvindo agora" : "ultima musica";
       document.getElementById("npTime").textContent   = isLive ? "" : (ts ? timeAgo(ts) : "");
+
       const dot  = document.getElementById("npDot");
       const bars = document.getElementById("npBars");
       if(isLive){ dot.classList.remove("idle"); bars.classList.remove("idle"); }
       else { dot.classList.add("idle"); bars.classList.add("idle"); }
-      if(art && !art.includes("2a96cbd8b46e442fc41c2b86b821562f")){
+
+      const validArt = a => a && !a.includes("2a96cbd8b46e442fc41c2b86b821562f");
+      if(validArt(art)){
         const img = document.getElementById("npArt");
         img.src=art; img.style.display="block";
         document.getElementById("npArtPlaceholder").style.display="none";
       }
+
+      // Mini thumbs (next 4 after current)
+      const thumbsEl = document.getElementById("npThumbs");
+      thumbsEl.innerHTML = "";
+      const recent = isLive ? tracks.slice(1,5) : tracks.slice(1,5);
+      recent.forEach(t => {
+        const a = t.image?.[1]?.["#text"] || "";
+        if(!validArt(a)) return;
+        const img = document.createElement("img");
+        img.src = a; img.className = "np-thumb";
+        img.title = t.name + " – " + t.artist["#text"];
+        thumbsEl.appendChild(img);
+      });
+
+      // Queue list
+      const listEl = document.getElementById("npQueueList");
+      listEl.innerHTML = "";
+      const qTracks = isLive ? tracks.slice(1) : tracks.slice(1);
+      qTracks.forEach(t => {
+        const a    = t.image?.[2]?.["#text"] || "";
+        const ts2  = t.date?.uts;
+        const div  = document.createElement("div");
+        div.className = "np-q-item";
+        div.innerHTML = \`
+          \${validArt(a) ? \`<img class="np-q-art" src="\${a}" alt=""/>\` : \`<div class="np-q-art" style="display:flex;align-items:center;justify-content:center;font-size:.9rem">♪</div>\`}
+          <div class="np-q-info">
+            <div class="np-q-song">\${t.name}</div>
+            <div class="np-q-artist">\${t.artist["#text"]}</div>
+          </div>
+          <div class="np-q-time">\${ts2 ? timeAgo(ts2) : ""}</div>
+        \`;
+        listEl.appendChild(div);
+      });
+
     }catch{ document.getElementById("npLabel").textContent="erro ao carregar" }
   }
 
