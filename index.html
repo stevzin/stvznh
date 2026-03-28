@@ -125,6 +125,29 @@
       line-height:1.2;
     }
 
+    /* F1 widget */
+    .f1-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+    .f1-header{display:flex;align-items:center;justify-content:space-between;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+    .f1-season{font-size:.6rem;color:#333;letter-spacing:.08em}
+    .f1-driver{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:#0a0a0a;border:1px solid #1a1a1a}
+    .f1-driver.verstappen{border-color:rgba(30,91,198,.35)}
+    .f1-driver.bortoleto{border-color:rgba(150,0,0,.35)}
+    .f1-photo{width:48px;height:48px;border-radius:50%;object-fit:cover;object-position:center top;flex-shrink:0;background:#111;border:2px solid #1a1a1a}
+    .f1-driver.verstappen .f1-photo{border-color:rgba(30,91,198,.6)}
+    .f1-driver.bortoleto .f1-photo{border-color:rgba(200,0,0,.6)}
+    .f1-info{flex:1;min-width:0}
+    .f1-name{font-size:.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .f1-team{font-size:.68rem;color:var(--muted);margin-top:2px;letter-spacing:.03em}
+    .f1-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+    .f1-pts{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;line-height:1}
+    .f1-driver.verstappen .f1-pts{color:#1e5bc6}
+    .f1-driver.bortoleto .f1-pts{color:var(--red)}
+    .f1-pos{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:#444}
+    .f1-flag{font-size:.85rem}
+    .f1-bar-wrap{width:100%;height:3px;background:#111;border-radius:2px;overflow:hidden;margin-top:2px}
+    .f1-bar{height:100%;border-radius:2px;transition:width 1s cubic-bezier(.22,1,.36,1)}
+    .f1-driver.verstappen .f1-bar{background:#1e5bc6}
+    .f1-driver.bortoleto .f1-bar{background:var(--red)}
     .footer{font-size:.65rem;color:#2a2a2a;letter-spacing:.1em;text-transform:uppercase}
   </style>
 </head>
@@ -268,6 +291,46 @@
   </div>
 
 
+  <!-- F1 STANDINGS -->
+  <div class="f1-box" id="f1Box">
+    <div class="f1-header">
+      <span>🏎 F1 standings</span>
+      <span class="f1-season" id="f1Season">2026 · round 2</span>
+    </div>
+
+    <div class="f1-driver verstappen">
+      <img class="f1-photo" id="verPhoto"
+        src="https://www.formula1.com/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png"
+        onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Max_Verstappen_2023_headshot.jpg/220px-Max_Verstappen_2023_headshot.jpg'"
+        alt="Verstappen"/>
+      <div class="f1-info">
+        <div class="f1-name">Max Verstappen</div>
+        <div class="f1-team">Red Bull Racing · <span class="f1-flag">🇳🇱</span></div>
+        <div class="f1-bar-wrap"><div class="f1-bar" id="verBar" style="width:0%"></div></div>
+      </div>
+      <div class="f1-right">
+        <div class="f1-pts" id="verPts">8</div>
+        <div class="f1-pos" id="verPos">P6</div>
+      </div>
+    </div>
+
+    <div class="f1-driver bortoleto">
+      <img class="f1-photo" id="borPhoto"
+        src="https://www.formula1.com/content/dam/fom-website/drivers/G/GABBOR01_Gabriel_Bortoleto/gabbor01.png"
+        onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Gabriel_Bortoleto_2024.jpg/220px-Gabriel_Bortoleto_2024.jpg'"
+        alt="Bortoleto"/>
+      <div class="f1-info">
+        <div class="f1-name">Gabriel Bortoleto</div>
+        <div class="f1-team">Audi · <span class="f1-flag">🇧🇷</span></div>
+        <div class="f1-bar-wrap"><div class="f1-bar" id="borBar" style="width:0%"></div></div>
+      </div>
+      <div class="f1-right">
+        <div class="f1-pts" id="borPts">2</div>
+        <div class="f1-pos" id="borPos">P12</div>
+      </div>
+    </div>
+  </div>
+
   <div class="footer">ithalo · 2026</div>
 </div>
 
@@ -396,8 +459,62 @@
 
   fetchSteam();
   fetchNowPlaying();
+  fetchF1();
   setInterval(fetchSteam, 60000);
   setInterval(fetchNowPlaying, 10000);
+  setInterval(fetchF1, 300000);
+
+  async function fetchF1(){
+    // Fallback: 2026 standings after Round 2 (China GP)
+    const fallback = {
+      verstappen: {pts:8,  pos:"P6",  round:2},
+      bortoleto:  {pts:2,  pos:"P12", round:2},
+      leader:     {pts:43, name:"Russell"}
+    };
+
+    function applyF1(ver, bor, leaderPts, season, round){
+      document.getElementById("verPts").textContent = ver.pts;
+      document.getElementById("verPos").textContent = ver.pos;
+      document.getElementById("borPts").textContent = bor.pts;
+      document.getElementById("borPos").textContent = bor.pos;
+      document.getElementById("f1Season").textContent = "2026 · round " + round;
+      const max = Math.max(leaderPts, 1);
+      setTimeout(()=>{ document.getElementById("verBar").style.width = Math.max((ver.pts/max)*100, ver.pts>0?4:0)+"%"; },300);
+      setTimeout(()=>{ document.getElementById("borBar").style.width = Math.max((bor.pts/max)*100, bor.pts>0?4:0)+"%"; },500);
+    }
+
+    try{
+      // Try Jolpica live API for 2026
+      const r = await fetch("https://api.jolpi.ca/ergast/f1/2026/driverStandings/");
+      if(!r.ok) throw new Error("not ok");
+      const d = await r.json();
+      const list = d?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings;
+      const round = d?.MRData?.StandingsTable?.StandingsLists?.[0]?.round || "?";
+      if(!list || !list.length) throw new Error("empty");
+
+      let leaderPts = parseInt(list[0]?.points || 1);
+      let ver = {pts:0, pos:"—"};
+      let bor = {pts:0, pos:"—"};
+
+      list.forEach(s => {
+        const fam = s.Driver.familyName;
+        const pts = parseInt(s.points);
+        const pos = "P" + s.position;
+        if(fam === "Verstappen") ver = {pts, pos};
+        if(fam === "Bortoleto")  bor = {pts, pos};
+      });
+
+      applyF1(ver, bor, leaderPts, "2026", round);
+
+    } catch(e){
+      // Fallback to known data
+      applyF1(
+        {pts: fallback.verstappen.pts, pos: fallback.verstappen.pos},
+        {pts: fallback.bortoleto.pts,  pos: fallback.bortoleto.pos},
+        fallback.leader.pts, "2026", fallback.verstappen.round
+      );
+    }
+  }
 </script>
 </body>
 </html>
