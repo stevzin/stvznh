@@ -76,10 +76,6 @@
     @keyframes bar{from{transform:scaleY(.4)}to{transform:scaleY(1)}}
     .np-bars.idle span{animation:none;transform:scaleY(.3);background:#333}
 
-    /* progress bar */
-    .np-progress{width:100%;height:2px;background:#1e1e1e;border-radius:2px;overflow:hidden;margin-top:2px}
-    .np-progress-fill{height:100%;background:var(--red);border-radius:2px;width:0%;transition:width 1s linear}
-    .np-progress.idle .np-progress-fill{background:#2a2a2a}
 
     /* mini thumbs row */
     .np-thumbs{display:flex;gap:5px;margin-top:2px}
@@ -332,28 +328,6 @@
     icon.classList.toggle("open");
   }
 
-  // Progress ticker state
-  let progressInterval = null;
-  let trackStart = null;
-  let trackDuration = 0;
-  let lastTrackKey = "";
-
-  function startProgress(duration){
-    clearInterval(progressInterval);
-    trackDuration = duration;
-    trackStart = Date.now();
-    const fill = document.getElementById("npProgressFill");
-    const bar  = document.getElementById("npProgress");
-    bar.classList.remove("idle");
-    progressInterval = setInterval(() => {
-      if(!trackDuration) return;
-      const elapsed = (Date.now() - trackStart) / 1000;
-      const pct = Math.min((elapsed / trackDuration) * 100, 100);
-      fill.style.width = pct + "%";
-      if(pct >= 100) clearInterval(progressInterval);
-    }, 1000);
-  }
-
   async function fetchNowPlaying(){
     try{
       const r = await fetch(LFAPI.replace("limit=1","limit=8"));
@@ -367,8 +341,6 @@
       const artist = track.artist["#text"];
       const art    = track.image?.[2]?.["#text"] || "";
       const ts     = track.date?.uts;
-      const trackKey = song + artist;
-
       document.getElementById("npSong").textContent   = song;
       document.getElementById("npArtist").textContent = artist;
       document.getElementById("npLabel").textContent  = isLive ? "ouvindo agora" : "ultima musica";
@@ -376,26 +348,8 @@
 
       const dot  = document.getElementById("npDot");
       const bars = document.getElementById("npBars");
-      const bar  = document.getElementById("npProgress");
-      if(isLive){
-        dot.classList.remove("idle"); bars.classList.remove("idle");
-        bar.classList.remove("idle");
-        // Fetch duration and start progress when track changes
-        if(trackKey !== lastTrackKey){
-          lastTrackKey = trackKey;
-          fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(song)}&api_key=${LASTFM_API_KEY}&format=json`)
-            .then(r=>r.json()).then(d=>{
-              const dur = parseInt(d.track?.duration || 0) / 1000;
-              if(dur > 0) startProgress(dur);
-            }).catch(()=>{});
-        }
-      } else {
-        dot.classList.add("idle"); bars.classList.add("idle");
-        bar.classList.add("idle");
-        clearInterval(progressInterval);
-        document.getElementById("npProgressFill").style.width = "0%";
-        lastTrackKey = "";
-      }
+      if(isLive){ dot.classList.remove("idle"); bars.classList.remove("idle"); }
+      else { dot.classList.add("idle"); bars.classList.add("idle"); }
 
       const validArt = a => a && !a.includes("2a96cbd8b46e442fc41c2b86b821562f");
       if(validArt(art)){
