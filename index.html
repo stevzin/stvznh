@@ -98,6 +98,9 @@
     .np-q-artist{font-size:.7rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .np-q-time{font-size:.62rem;color:#333;flex-shrink:0}
     .np-toggle{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-left:auto;display:flex;align-items:center;gap:4px}
+    .np-spotify-link{display:flex;align-items:center;gap:5px;text-decoration:none;color:#1db954;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;transition:.2s;flex-shrink:0}
+    .np-spotify-link:hover{opacity:.7}
+    .np-spotify-link svg{width:13px;height:13px;flex-shrink:0}
     .np-toggle svg{width:10px;height:10px;transition:transform .3s}
     .np-toggle.open svg{transform:rotate(180deg)}
 
@@ -161,14 +164,22 @@
   <h1>Itha<span class="accent">lo</span></h1>
   <div class="location">🇧🇷 &nbsp;Brazil · @stevzin_</div>
 
-  <a class="insta-link" href="https://www.instagram.com/stvznh/" target="_blank" rel="noopener">
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2"/>
-      <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
-    </svg>
-    @stvznh
-  </a>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <a class="insta-link" href="https://www.instagram.com/stvznh/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2"/>
+        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+      </svg>
+      @stvznh
+    </a>
+    <a class="insta-link" href="https://open.spotify.com/playlist/67j2az0cV5dRBfrVQY8m5z" target="_blank" rel="noopener" style="border-color:#1e1e1e">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="color:#1db954">
+        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.623.623 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.623.623 0 01-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.779.779 0 01-.973-.516.781.781 0 01.516-.973c3.632-1.102 8.147-.568 11.237 1.328a.78.78 0 01.257 1.07zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.937.937 0 11-.543-1.793c3.563-1.08 9.484-.87 13.22 1.37a.937.937 0 01-.061 1.58z"/>
+      </svg>
+      playlist
+    </a>
+  </div>
 
   <hr/>
 
@@ -193,6 +204,12 @@
       <div class="np-header">
         <div class="np-dot idle" id="npDot"></div>
         <span id="npLabel">carregando...</span>
+        <a class="np-spotify-link" href="https://open.spotify.com/playlist/67j2az0cV5dRBfrVQY8m5z" target="_blank" rel="noopener" title="minha playlist">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.623.623 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.623.623 0 01-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.779.779 0 01-.973-.516.781.781 0 01.516-.973c3.632-1.102 8.147-.568 11.237 1.328a.78.78 0 01.257 1.07zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.937.937 0 11-.543-1.793c3.563-1.08 9.484-.87 13.22 1.37a.937.937 0 01-.061 1.58z"/>
+          </svg>
+          playlist
+        </a>
         <div class="np-toggle" id="npToggleIcon">
           <span>queue</span>
           <svg viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
